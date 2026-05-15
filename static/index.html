@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1565C0" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Pilotage Servo</title>
+</head>
+<body>
+
+<header>
+  <div class="dot" id="dot"></div>
+  <h1>Pilotage Servo — Mini swall-E</h1>
+</header>
+
+<main>
+
+  <!-- Connexion -->
+  <div class="card" id="card-conn">
+    <h2>Connexion Arduino</h2>
+    <div class="row">
+      <select id="port-select"><option>Chargement...</option></select>
+      <button class="btn-icon btn-secondary" onclick="loadPorts()" title="Rafraîchir">⟳</button>
+    </div>
+    <div class="row" style="margin-top:8px;">
+      <button class="btn-primary" style="flex:1" onclick="connect()">Connecter</button>
+      <button class="btn-secondary" style="flex:1" onclick="disconnect()">Déconnecter</button>
+    </div>
+    <div id="status-conn">Non connecté</div>
+  </div>
+
+  <!-- Séquences prédéfinies -->
+  <div class="card">
+    <h2>Séquences prédéfinies</h2>
+
+    <div id="predef-P1" class="card seq-card" style="margin-bottom:10px;">
+      <div class="seq-header">
+        <span class="seq-title">Séquence 1 prédéfinie</span>
+        <span class="seq-badge" id="badge-P1">Prêt</span>
+      </div>
+      <div class="seq-actions">
+        <button class="btn-green" id="btn-launch-P1" onclick="launchPredef('P1')">▶ Lancer</button>
+        <button class="btn-red"   id="btn-stop-P1"   onclick="stopPredef('P1')" disabled>■ Stop</button>
+      </div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+
+    <div id="predef-P2" class="card seq-card">
+      <div class="seq-header">
+        <span class="seq-title">Séquence 2 prédéfinie</span>
+        <span class="seq-badge" id="badge-P2">Prêt</span>
+      </div>
+      <div class="seq-actions">
+        <button class="btn-green" id="btn-launch-P2" onclick="launchPredef('P2')">▶ Lancer</button>
+        <button class="btn-red"   id="btn-stop-P2"   onclick="stopPredef('P2')" disabled>■ Stop</button>
+      </div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Séquences -->
+  <div id="seq-1" class="card seq-card">
+    <div class="seq-header">
+      <span class="seq-title">Séquence 1</span>
+      <span class="seq-badge" id="badge-1">Non chargée</span>
+    </div>
+    <div class="seq-files" id="files-1">
+      <div><label>Servo 1</label><input type="file" accept=".txt" id="s1-f1" /></div>
+      <div><label>Servo 2</label><input type="file" accept=".txt" id="s1-f2" /></div>
+      <div><label>Servo 3</label><input type="file" accept=".txt" id="s1-f3" /></div>
+      <div><label>Servo 4</label><input type="file" accept=".txt" id="s1-f4" /></div>
+    </div>
+    <div class="seq-actions">
+      <button class="btn-secondary" onclick="uploadSeq(1)">📂 Charger</button>
+      <button class="btn-green" id="btn-launch-1" onclick="launchSeq(1)" disabled>▶ Lancer</button>
+      <button class="btn-red"   id="btn-stop-1"   onclick="stopSeq(1)"   disabled>■ Stop</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <div id="seq-2" class="card seq-card">
+    <div class="seq-header">
+      <span class="seq-title">Séquence 2</span>
+      <span class="seq-badge" id="badge-2">Non chargée</span>
+    </div>
+    <div class="seq-files" id="files-2">
+      <div><label>Servo 1</label><input type="file" accept=".txt" id="s2-f1" /></div>
+      <div><label>Servo 2</label><input type="file" accept=".txt" id="s2-f2" /></div>
+      <div><label>Servo 3</label><input type="file" accept=".txt" id="s2-f3" /></div>
+      <div><label>Servo 4</label><input type="file" accept=".txt" id="s2-f4" /></div>
+    </div>
+    <div class="seq-actions">
+      <button class="btn-secondary" onclick="uploadSeq(2)">📂 Charger</button>
+      <button class="btn-green" id="btn-launch-2" onclick="launchSeq(2)" disabled>▶ Lancer</button>
+      <button class="btn-red"   id="btn-stop-2"   onclick="stopSeq(2)"   disabled>■ Stop</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <div id="seq-3" class="card seq-card">
+    <div class="seq-header">
+      <span class="seq-title">Séquence 3</span>
+      <span class="seq-badge" id="badge-3">Non chargée</span>
+    </div>
+    <div class="seq-files" id="files-3">
+      <div><label>Servo 1</label><input type="file" accept=".txt" id="s3-f1" /></div>
+      <div><label>Servo 2</label><input type="file" accept=".txt" id="s3-f2" /></div>
+      <div><label>Servo 3</label><input type="file" accept=".txt" id="s3-f3" /></div>
+      <div><label>Servo 4</label><input type="file" accept=".txt" id="s3-f4" /></div>
+    </div>
+    <div class="seq-actions">
+      <button class="btn-secondary" onclick="uploadSeq(3)">📂 Charger</button>
+      <button class="btn-green" id="btn-launch-3" onclick="launchSeq(3)" disabled>▶ Lancer</button>
+      <button class="btn-red"   id="btn-stop-3"   onclick="stopSeq(3)"   disabled>■ Stop</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- Graphes paginés -->
+  <div class="card" id="graphs-section">
+    <div class="graphs-nav">
+      <button class="btn-icon btn-secondary" onclick="changerPage(-1)">‹</button>
+      <span id="graphs-page-label">Séquence 1 prédéfinie</span>
+      <button class="btn-icon btn-secondary" onclick="changerPage(1)">›</button>
+    </div>
+    <div class="graphs-dots" id="graphs-dots"></div>
+    <img id="graphs-img" src="/api/predefined/P1/graph.png" style="width:100%;border-radius:6px;margin-top:8px;" />
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+  const API = "";  // même origine
+
+  // ── Toast ──────────────────────────────────────────────────────────────────
+  function toast(msg, duration = 2500) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), duration);
+  }
+
+  // ── Ports ──────────────────────────────────────────────────────────────────
+  async function loadPorts() {
+    const res = await fetch(`${API}/api/ports`);
+    const ports = await res.json();
+    const sel = document.getElementById("port-select");
+    sel.innerHTML = ports.length
+      ? ports.map(p => `<option>${p}</option>`).join("")
+      : `<option>Aucun port détecté</option>`;
+  }
+
+  // ── Connexion ──────────────────────────────────────────────────────────────
+  async function connect() {
+    const port = document.getElementById("port-select").value;
+    const res = await fetch(`${API}/api/connect`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ port })
+    });
+    const data = await res.json();
+    toast(data.message);
+    pollStatus();
+  }
+
+  async function disconnect() {
+    await fetch(`${API}/api/disconnect`, { method: "POST" });
+    toast("Déconnecté");
+    pollStatus();
+  }
+
+  // ── Statut (polling 2s) ────────────────────────────────────────────────────
+  async function pollStatus() {
+    const res = await fetch(`${API}/api/status`);
+    const data = await res.json();
+
+    const dot = document.getElementById("dot");
+    const statusConn = document.getElementById("status-conn");
+
+    if (data.connected) {
+      dot.classList.add("connected");
+      statusConn.textContent = `Connecté : ${data.port} ✓`;
+      statusConn.style.color = "#2E7D32";
+    } else {
+      dot.classList.remove("connected");
+      statusConn.textContent = "Non connecté";
+      statusConn.style.color = "#888";
+    }
+
+    for (let n = 1; n <= 3; n++) {
+      const s = data.sequences[n] || "non_chargee";
+      setSeqState(n, s);
+    }
+
+    for (const nom of ["P1", "P2"]) {
+      const s = data.predefined?.[nom] || "pret";
+      setPredefState(nom, s);
+    }
+  }
+
+  function setSeqState(n, state) {
+    const card   = document.getElementById(`seq-${n}`);
+    const badge  = document.getElementById(`badge-${n}`);
+    const launch = document.getElementById(`btn-launch-${n}`);
+    const stop   = document.getElementById(`btn-stop-${n}`);
+
+    // Reset classes
+    card.classList.remove("loaded", "running", "done", "stopped");
+    badge.classList.remove("loaded", "running", "done", "stopped");
+
+    const map = {
+      chargee:    { label: "Chargée ✓",   cls: "loaded",  canLaunch: true,  canStop: false },
+      en_cours:   { label: "En cours ▶",  cls: "running", canLaunch: false, canStop: true  },
+      terminee:   { label: "Terminée ✓",  cls: "done",    canLaunch: true,  canStop: false },
+      arretee:    { label: "Arrêtée ■",   cls: "stopped", canLaunch: true,  canStop: false },
+    };
+
+    const info = map[state] || { label: "Non chargée", cls: "", canLaunch: false, canStop: false };
+    if (info.cls) { card.classList.add(info.cls); badge.classList.add(info.cls); }
+    badge.textContent = info.label;
+    launch.disabled = !info.canLaunch;
+    stop.disabled   = !info.canStop;
+  }
+
+  // ── Séquences ──────────────────────────────────────────────────────────────
+  async function uploadSeq(n) {
+    const fd = new FormData();
+    for (let i = 1; i <= 4; i++) {
+      const file = document.getElementById(`s${n}-f${i}`).files[0];
+      if (!file) { toast(`Sélectionnez le fichier servo ${i}`); return; }
+      fd.append(`servo${i}`, file);
+    }
+    const res = await fetch(`${API}/api/sequences/${n}/upload`, { method: "POST", body: fd });
+    const data = await res.json();
+    toast(data.message);
+    if (data.ok) {
+      setSeqState(n, "chargee");
+      afficherGrapheCustom(n, `Séquence ${n}`);
+    }
+  }
+
+  async function launchSeq(n) {
+    const res = await fetch(`${API}/api/sequences/${n}/launch`, { method: "POST" });
+    const data = await res.json();
+    toast(data.message);
+    if (data.ok) {
+      setSeqState(n, "en_cours");
+      afficherGrapheCustom(n, `Séquence ${n}`);
+    }
+  }
+
+  async function stopSeq(n) {
+    const res = await fetch(`${API}/api/sequences/${n}/stop`, { method: "POST" });
+    const data = await res.json();
+    toast(data.message);
+    if (data.ok) setSeqState(n, "arretee");
+  }
+
+  // ── Séquences prédéfinies ──────────────────────────────────────────────────
+  function setPredefState(nom, state) {
+    const card   = document.getElementById(`predef-${nom}`);
+    const badge  = document.getElementById(`badge-${nom}`);
+    const launch = document.getElementById(`btn-launch-${nom}`);
+    const stop   = document.getElementById(`btn-stop-${nom}`);
+
+    card.classList.remove("loaded", "running", "done", "stopped");
+    badge.classList.remove("loaded", "running", "done", "stopped");
+
+    const map = {
+      pret:     { label: "Prêt",        cls: "",        canLaunch: true,  canStop: false },
+      en_cours: { label: "En cours ▶",  cls: "running", canLaunch: false, canStop: true  },
+      terminee: { label: "Terminée ✓",  cls: "done",    canLaunch: true,  canStop: false },
+      arretee:  { label: "Arrêtée ■",   cls: "stopped", canLaunch: true,  canStop: false },
+    };
+
+    const info = map[state] || map["pret"];
+    if (info.cls) { card.classList.add(info.cls); badge.classList.add(info.cls); }
+    badge.textContent = info.label;
+    launch.disabled = !info.canLaunch;
+    stop.disabled   = !info.canStop;
+  }
+
+  async function launchPredef(nom) {
+    const res  = await fetch(`${API}/api/predefined/${nom}/launch`, { method: "POST" });
+    const data = await res.json();
+    toast(data.message);
+    if (data.ok) setPredefState(nom, "en_cours");
+  }
+
+  async function stopPredef(nom) {
+    const res  = await fetch(`${API}/api/predefined/${nom}/stop`, { method: "POST" });
+    const data = await res.json();
+    toast(data.message);
+    if (data.ok) setPredefState(nom, "arretee");
+  }
+
+  // ── Graphes paginés ────────────────────────────────────────────────────────
+  const pages = [
+    { label: "Séquence 1 prédéfinie", src: () => "/api/predefined/P1/graph.png" },
+    { label: "Séquence 2 prédéfinie", src: () => "/api/predefined/P2/graph.png" },
+  ];
+  let pageActive = 0;
+
+  function ajouterPageCustom(n, titre) {
+    // Remplace ou ajoute la page custom
+    const idx = pages.findIndex(p => p.label === titre);
+    const page = { label: titre, src: () => `/api/sequences/${n}/graph.png?t=${Date.now()}` };
+    if (idx >= 0) pages[idx] = page;
+    else pages.push(page);
+    allerPage(pages.length - 1);
+  }
+
+  function allerPage(idx) {
+    pageActive = Math.max(0, Math.min(idx, pages.length - 1));
+    const p = pages[pageActive];
+    document.getElementById("graphs-page-label").textContent = p.label;
+    document.getElementById("graphs-img").src = p.src();
+    renderDots();
+  }
+
+  function changerPage(dir) { allerPage(pageActive + dir); }
+
+  function renderDots() {
+    const dots = document.getElementById("graphs-dots");
+    dots.innerHTML = pages.map((_, i) =>
+      `<span class="dot-page ${i === pageActive ? "active" : ""}" onclick="allerPage(${i})"></span>`
+    ).join("");
+  }
+
+  function afficherGrapheCustom(n, titre) {
+    ajouterPageCustom(n, titre);
+  }
+
+  renderDots();
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  loadPorts();
+  pollStatus();
+  setInterval(pollStatus, 2000);
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #F0F4F8;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+header {
+  background: #1565C0;
+  color: white;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+header h1 { font-size: 1.1rem; font-weight: 600; }
+
+.dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #ef5350; flex-shrink: 0;
+  transition: background 0.3s;
+}
+.dot.connected { background: #66BB6A; }
+
+main { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.card h2 {
+  font-size: 0.85rem; color: #555;
+  text-transform: uppercase; letter-spacing: .5px;
+  margin-bottom: 12px;
+}
+
+.row { display: flex; gap: 8px; align-items: center; }
+.row select, .row input {
+  flex: 1; padding: 10px 12px; border: 1px solid #ddd;
+  border-radius: 8px; font-size: 0.95rem; background: #FAFAFA;
+}
+
+button {
+  padding: 11px 16px; border: none; border-radius: 8px;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+button:active  { transform: scale(0.97); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-primary   { background: #1565C0; color: white; }
+.btn-secondary { background: #ECEFF1; color: #333; }
+.btn-green     { background: #2E7D32; color: white; }
+.btn-red       { background: #C62828; color: white; }
+.btn-icon      { padding: 11px 13px; font-size: 1rem; }
+
+#status-conn { margin-top: 8px; font-size: 0.85rem; color: #888; }
+
+/* ── Séquences ────────────────────────────────────────────────────────────── */
+.seq-card           { border-left: 4px solid #BDBDBD; }
+.seq-card.loaded    { border-color: #43A047; }
+.seq-card.running   { border-color: #1565C0; }
+.seq-card.done      { border-color: #43A047; }
+.seq-card.stopped   { border-color: #EF6C00; }
+
+.seq-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.seq-title { font-size: 1rem; font-weight: 600; }
+
+.seq-badge {
+  font-size: 0.75rem; padding: 3px 8px;
+  border-radius: 12px; background: #ECEFF1; color: #666;
+}
+.seq-badge.loaded   { background: #E8F5E9; color: #2E7D32; }
+.seq-badge.running  { background: #E3F2FD; color: #1565C0; }
+.seq-badge.done     { background: #E8F5E9; color: #2E7D32; }
+.seq-badge.stopped  { background: #FFF3E0; color: #E65100; }
+
+.seq-files { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.seq-files label { font-size: 0.8rem; color: #666; margin-bottom: 2px; display: block; }
+.seq-files input[type=file] {
+  font-size: 0.8rem; width: 100%; padding: 6px;
+  border: 1px dashed #ccc; border-radius: 6px; background: #FAFAFA;
+}
+
+.seq-actions { display: flex; gap: 8px; }
+.seq-actions button { flex: 1; }
+
+.progress-bar {
+  height: 4px; background: #E3F2FD; border-radius: 2px;
+  margin-top: 10px; overflow: hidden; display: none;
+}
+.progress-fill {
+  height: 100%; width: 0%; background: #1565C0;
+  border-radius: 2px; transition: width 0.3s;
+  animation: pulse-bar 1.5s ease-in-out infinite;
+}
+@keyframes pulse-bar {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+.seq-card.running .progress-bar { display: block; }
+
+/* ── Graphes paginés ──────────────────────────────────────────────────────── */
+.graphs-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.graphs-nav span {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+}
+.graphs-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.dot-page {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #BDBDBD;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dot-page.active { background: #1565C0; }
+
+/* ── Toast ────────────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: #323232; color: white; padding: 10px 20px;
+  border-radius: 20px; font-size: 0.85rem; z-index: 100;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+#toast.show { opacity: 1; }
