@@ -31,6 +31,29 @@
     <div id="status-conn">Non connecté</div>
   </div>
 
+  <!-- Servos actifs -->
+  <div class="card">
+    <h2>Servos actifs</h2>
+    <div class="servos-grid">
+      <div class="servo-toggle" id="servo-1" onclick="toggleServo(1)">
+        <span class="servo-label">Servo 1</span>
+        <div class="toggle on" id="toggle-1"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="servo-toggle" id="servo-2" onclick="toggleServo(2)">
+        <span class="servo-label">Servo 2</span>
+        <div class="toggle on" id="toggle-2"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="servo-toggle" id="servo-3" onclick="toggleServo(3)">
+        <span class="servo-label">Servo 3</span>
+        <div class="toggle on" id="toggle-3"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="servo-toggle" id="servo-4" onclick="toggleServo(4)">
+        <span class="servo-label">Servo 4</span>
+        <div class="toggle on" id="toggle-4"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Séquences prédéfinies -->
   <div class="card">
     <h2>Séquences prédéfinies</h2>
@@ -200,6 +223,8 @@
       const s = data.predefined?.[nom] || "pret";
       setPredefState(nom, s);
     }
+
+    if (data.servos_actifs) syncServosActifs(data.servos_actifs);
   }
 
   function setSeqState(n, state) {
@@ -296,6 +321,23 @@
     const data = await res.json();
     toast(data.message);
     if (data.ok) setPredefState(nom, "arretee");
+  }
+
+  // ── Servos actifs ──────────────────────────────────────────────────────────
+  async function toggleServo(n) {
+    const res  = await fetch(`${API}/api/servos/${n}/toggle`, { method: "POST" });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById(`toggle-${n}`).className = `toggle ${data.actif ? "on" : "off"}`;
+      toast(data.message);
+    }
+  }
+
+  function syncServosActifs(servosActifs) {
+    for (let n = 1; n <= 4; n++) {
+      const actif = servosActifs[n] !== false;
+      document.getElementById(`toggle-${n}`).className = `toggle ${actif ? "on" : "off"}`;
+    }
   }
 
   // ── Graphes paginés ────────────────────────────────────────────────────────

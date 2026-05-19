@@ -111,6 +111,47 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .seq-card.running .progress-bar { display: block; }
 
+/* ── Servos actifs ────────────────────────────────────────────────────────── */
+.servos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.servo-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F8F9FA;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #E0E0E0;
+  transition: background 0.2s;
+}
+.servo-toggle:active { background: #ECEFF1; }
+.servo-label { font-weight: 600; font-size: 0.9rem; }
+
+.toggle {
+  width: 44px; height: 24px;
+  border-radius: 12px;
+  position: relative;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+.toggle.on  { background: #2E7D32; }
+.toggle.off { background: #BDBDBD; }
+.toggle-knob {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 3px; left: 3px;
+  transition: left 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.toggle.on .toggle-knob { left: 23px; }
+
 /* ── Graphes paginés ──────────────────────────────────────────────────────── */
 .graphs-nav {
   display: flex;

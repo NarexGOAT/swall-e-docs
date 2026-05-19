@@ -8,15 +8,35 @@ import numpy as np
 import threading
 import time
 import io
+import os
 
-app = Flask(__name__, static_folder="static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+app = Flask(__name__, static_folder=STATIC_DIR)
 
 ser = None
 donnees_chargees = {}
 sequence_en_cours = {}   # {seq_num: threading.Event}
 sequence_statut = {}     # {seq_num: str}
+servos_actifs   = {1: True, 2: True, 3: True, 4: True}
+derniers_angles = {1: 90,   2: 90,   3: 90,   4: 90}
 
 # ─── Utilitaires ──────────────────────────────────────────────────────────────
+
+def envoyer_angles(a1, a2, a3, a4):
+    """Envoie les angles en respectant les servos actifs."""
+    angles = [a1, a2, a3, a4]
+    commande = []
+    for i, a in enumerate(angles, start=1):
+        if servos_actifs[i]:
+            derniers_angles[i] = int(a)
+            commande.append(int(a))
+        else:
+            commande.append(derniers_angles[i])  # maintien position
+    ser.write(f"{commande[0]},{commande[1]},{commande[2]},{commande[3]}\n".encode())
+
+
 
 def lire_txt_contenu(contenu):
     temps, angles = [], []
@@ -78,11 +98,11 @@ def _generer_image(data):
 
 @app.route("/")
 def index():
-    return send_from_directory("static", "index.html")
+    return send_from_directory(STATIC_DIR, "index.html")
 
 @app.route("/<path:filename>")
 def static_files(filename):
-    return send_from_directory("static", filename)
+    return send_from_directory(STATIC_DIR, filename)
 
 
 # ─── API Connexion ─────────────────────────────────────────────────────────────
@@ -119,8 +139,20 @@ def status():
         "connected": connected,
         "port": ser.port if connected else None,
         "sequences": sequence_statut,
-        "predefined": predef_statut
+        "predefined": predef_statut,
+        "servos_actifs": servos_actifs
     })
+
+
+# ─── API Servos actifs ────────────────────────────────────────────────────────
+
+@app.route("/api/servos/<int:n>/toggle", methods=["POST"])
+def toggle_servo(n):
+    if n not in servos_actifs:
+        return jsonify({"ok": False, "message": "Servo invalide"}), 400
+    servos_actifs[n] = not servos_actifs[n]
+    etat = "activé" if servos_actifs[n] else "désactivé"
+    return jsonify({"ok": True, "actif": servos_actifs[n], "message": f"Servo {n} {etat}"})
 
 
 # ─── Séquences prédéfinies ────────────────────────────────────────────────────
@@ -167,7 +199,7 @@ def _run_predef(nom, stop_event):
             break
         a1, a2, a3, a4 = (data[j][1][i] for j in range(1, 5))
         try:
-            ser.write(f"{a1},{a2},{a3},{a4}\n".encode())
+            envoyer_angles(a1, a2, a3, a4)
         except Exception:
             break
         if i < nb_pas - 1:
@@ -247,7 +279,7 @@ def launch_sequence(n):
                 break
             a1, a2, a3, a4 = (data[j][1][i] for j in range(1, 5))
             try:
-                ser.write(f"{a1},{a2},{a3},{a4}\n".encode())
+                envoyer_angles(a1, a2, a3, a4)
             except Exception:
                 break
             if i < nb_pas - 1:
